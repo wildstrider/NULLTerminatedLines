@@ -1,12 +1,12 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <Windows.h>
 using namespace std;
 
 
 int Stringlength(char str[]);
-void to_upper(char str[]);// переводит строку в верхний регтстр
-void to_lower(char str[]); // переводит строку в нижний регистр
-void capitalize(char str[]); // первую букву каждого слова в предложкнии делает заглавной
+void to_upper(char str[]);// РїРµСЂРµРІРѕРґРёС‚ СЃС‚СЂРѕРєСѓ РІ РІРµСЂС…РЅРёР№ СЂРµРіС‚СЃС‚СЂ
+void to_lower(char str[]); // РїРµСЂРµРІРѕРґРёС‚ СЃС‚СЂРѕРєСѓ РІ РЅРёР¶РЅРёР№ СЂРµРіРёСЃС‚СЂ
+void capitalize(char str[]); // РїРµСЂРІСѓСЋ Р±СѓРєРІСѓ РєР°Р¶РґРѕРіРѕ СЃР»РѕРІР° РІ РїСЂРµРґР»РѕР¶РєРЅРёРё РґРµР»Р°РµС‚ Р·Р°РіР»Р°РІРЅРѕР№
 
 //#define STRING_DECLARATION
 
@@ -14,9 +14,9 @@ int main()
 {
 	setlocale(LC_ALL, "ru");
 #ifdef STRING_DECLARATION
-	// ASCII - символ с кодом '\0'
-	'H'; // СИМВОЛЬНАЯ КОНСТАНТА ТИПА char
-	//"hello" - это строкова константа
+	// ASCII - СЃРёРјРІРѕР» СЃ РєРѕРґРѕРј '\0'
+	'H'; // РЎРРњР’РћР›Р¬РќРђРЇ РљРћРќРЎРўРђРќРўРђ РўРРџРђ char
+	//"hello" - СЌС‚Рѕ СЃС‚СЂРѕРєРѕРІР° РєРѕРЅСЃС‚Р°РЅС‚Р°
 	//char str[] = { 'H','e','l','l','o','\0' };
 	/*for (int i = 0; i < sizeof(str); i++) {
 
@@ -32,7 +32,7 @@ int main()
 	cout << 'a' - 'A' << endl;
 	const int n = 20;
 	char str[n] = {};
-	cout << "Введите строку: ";
+	cout << "Р’РІРµРґРёС‚Рµ СЃС‚СЂРѕРєСѓ: ";
 	SetConsoleCP(1251);
 	cin.getline(str, n);//CP1251
 	SetConsoleCP(866);
@@ -58,7 +58,7 @@ void to_upper(char str[]) {
 	for (int i = 0; str[i]; i++) {
 
 		if (str[i] >= 'a' && str[i] <= 'z' ||
-			str[i] >= 'а' && str[i] <= 'я')
+			str[i] >= 'Р°' && str[i] <= 'СЏ')
 			str[i] -= ' ';
 	}
 }
@@ -67,7 +67,7 @@ void to_lower(char str[]) {
 
 	for (int i = 0; str[i]; i++) {
 		if (str[i] >= 'A' && str[i] <= 'Z' ||
-			str[i] >= 'А' && str[i] <= 'Я') {
+			str[i] >= 'Рђ' && str[i] <= 'РЇ') {
 			str[i] += 32;
 		}
 	}
@@ -76,13 +76,13 @@ void capitalize(char str[])
 {
 	to_lower(str);
 	if (str[0] >= 'a' && str[0] <= 'z' ||
-		str[0] >= 'а' && str[0] <= 'я') {
+		str[0] >= 'Р°' && str[0] <= 'СЏ') {
 		str[0] -= 32;
 	}
 	for (int i = 1; str[i]; i++) {
 		if (str[i - 1] == ' ') {
 			if (str[i] >= 'a' && str[i] <= 'z' ||
-				str[i] >= 'а' && str[i] <= 'я') {
+				str[i] >= 'Р°' && str[i] <= 'СЏ') {
 				str[i] -= 32;
 			}
 		}
