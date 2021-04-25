@@ -3,7 +3,7 @@
 #include <cmath>
 using namespace std;
 
-
+void reverse(char str[]);
 void shrink(char str[]); // удаляет лишние пробелы
 bool is_palindrome(char str[]); // Определяет, является ли строка палиндромом  
 bool is_int_number(char str[]); //Определяет, является ли строка целым числом
@@ -16,7 +16,7 @@ int  hex_to_dec(char str[]);	//Если строка - Шестнадцатер�
 string dec_to_hex(int decimal);  //Функция принимает десятичное число, и возвращает его Шестнадцатеричное значение.
 
 //bool is_mac_address(char str[]);//Проверяет, является ли строка MAC-адресом
-//bool is_ip_address(char str[]);	//Проверяет, является ли строка IP-адресом
+bool is_ip_address(char str[]);	//Проверяет, является ли строка IP-адресом
 
 
 int main()
@@ -71,9 +71,27 @@ int main()
 		cout << hex << " в шеснадцатеричной системе - " << dec_to_hex(hex) << endl;
 	}
 
+	if (is_ip_address(str)) {
+		cout << "Введеная строка является ip-адресом" << endl;
+	}
+	else
+		cout << "Введеная строка не является ip-адресом" << endl;
+
 	return 0;
 }
 
+
+void reverse(char str[])
+{
+	int s = strlen(str);
+	int temp;
+	for (int i = 0, j = s - 1; i < j; i++, j--) {
+
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+	}
+}
 void shrink(char str[])
 {
 	for (int i = 0; str[i]; i++) {
@@ -87,7 +105,6 @@ void shrink(char str[])
 		}
 	}
 }
-
 bool is_palindrome(char str[])
 {
 	int k = 0;
@@ -96,14 +113,13 @@ bool is_palindrome(char str[])
 		if (str[i] == str[j]) {
 			k++;
 		}
+          if (k == strlen(str)) {
+		      return true;
+	      }
 	}
-	if (k == strlen(str)) {
-		return true;
-	}
-	else
+	
 		return false;
 }
-
 bool is_int_number(char str[])
 {
 	int k = 0;
@@ -112,15 +128,14 @@ bool is_int_number(char str[])
 		if (str[i] >= '0' && str[i] <= '9') {
 			k++;
 		}
+          if (k == strlen(str)) {
+		     return true;
+	      }
 	}
-	if (k == strlen(str)) {
-		return true;
-	}
-	else
+	
 		return false;
 
 }
-
 bool is_bin_number(char str[])
 {
 	int k = 0;
@@ -129,14 +144,13 @@ bool is_bin_number(char str[])
 		if (str[i] >= '0' && str[i] <= '1') {
 			k++;
 		}
+          if (k == strlen(str)) {
+		      return true;
+	      }
 	}
-	if (k == strlen(str)) {
-		return true;
-	}
-	else
+
 		return false;
 }
-
 bool is_hex_number(char str[])
 {
 	int k = 0;
@@ -146,14 +160,13 @@ bool is_hex_number(char str[])
 			|| str[i] >= 'a' && str[i] <= 'f') {
 			k++;
 		}
+          if (k == strlen(str)) {
+		     return true;
+	      }
 	}
-	if (k == strlen(str)) {
-		return true;
-	}
-	else
+	
 		return false;
 }
-
 int  bin_to_dec(char str[])
 {
 	int sum = 0;
@@ -164,7 +177,6 @@ int  bin_to_dec(char str[])
 	}
 	return sum;
 }
-
 int  dec_to_bin(int decimal)
 {
 	int k = 0, i = 0;
@@ -175,18 +187,10 @@ int  dec_to_bin(int decimal)
 		decimal /= 2;
 	}
 	str[i] = '\0';
-	int s = strlen(str);
-	int temp;
-	for (int i = 0, j = s - 1; i < j; i++, j--) {
-
-		temp = str[i];
-		str[i] = str[j];
-		str[j] = temp;
-	}
+	reverse(str);
 	int n = to_int_number(str);
 	return n;
 }
-
 int  to_int_number(char str[])
 {
 	int x, y = 0;
@@ -200,7 +204,6 @@ int  to_int_number(char str[])
 	}
 	return y;
 }
-
 int  hex_to_dec(char str[])
 {
 	int f = 0, sum = 0;
@@ -220,7 +223,6 @@ int  hex_to_dec(char str[])
 	}
 	return sum;
 }
-
 string dec_to_hex(int decimal)
 {
 	int k = 0, i = 0;
@@ -236,14 +238,29 @@ string dec_to_hex(int decimal)
 	}
 
 	str[i] = '\0';
-	int s = strlen(str);
-	int temp;
-	for (int i = 0, j = s - 1; i < j; i++, j--) {
-
-		temp = str[i];
-		str[i] = str[j];
-		str[j] = temp;
-	}
+	reverse(str);
 	string v = str;
 	return v;
+}
+bool is_ip_address(char str[])
+{
+	int s = strlen(str);
+	int k=0,m=0;
+	for (int i = 0; str[i]; i++) {
+
+		
+		if (str[i] == '.') {
+			k++;
+		}
+		if (str[i] >= '0' && str[i] <= '9') {
+			m++;
+		}
+        if (k == 3 && m == s - 3) {
+		     return true;
+	    }
+    }
+	
+	return false;
+
+
 }
