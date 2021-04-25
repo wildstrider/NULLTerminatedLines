@@ -1,90 +1,249 @@
 ﻿#include <iostream>
 #include <Windows.h>
+#include <cmath>
 using namespace std;
 
 
-int Stringlength(char str[]);
-void to_upper(char str[]);// переводит строку в верхний регтстр
-void to_lower(char str[]); // переводит строку в нижний регистр
-void capitalize(char str[]); // первую букву каждого слова в предложкнии делает заглавной
+void shrink(char str[]); // удаляет лишние пробелы
+bool is_palindrome(char str[]); // Определяет, является ли строка палиндромом  
+bool is_int_number(char str[]); //Определяет, является ли строка целым числом
+bool is_bin_number(char str[]); //Проверяет, является ли строка двоичным числом      
+bool is_hex_number(char str[]); //Проверяет, является ли функция шестнадцатеричным числом
+int  bin_to_dec(char str[]);  //Если строка - двоичное число, функция вернет его десятичное значение.   
+int dec_to_bin(int decimal); //Функция принимает десятичное число, и возвращает его двоичное значение.
+int  to_int_number(char str[]); //Если строка - целое число, функция вернет его числовое значение. 
+int  hex_to_dec(char str[]);	//Если строка - Шестнадцатеричное число, функция вернет его десятичное значение
+string dec_to_hex(int decimal);  //Функция принимает десятичное число, и возвращает его Шестнадцатеричное значение.
 
-//#define STRING_DECLARATION
+//bool is_mac_address(char str[]);//Проверяет, является ли строка MAC-адресом
+//bool is_ip_address(char str[]);	//Проверяет, является ли строка IP-адресом
+
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
-#ifdef STRING_DECLARATION
-	// ASCII - символ с кодом '\0'
-	'H'; // СИМВОЛЬНАЯ КОНСТАНТА ТИПА char
-	//"hello" - это строкова константа
-	//char str[] = { 'H','e','l','l','o','\0' };
-	/*for (int i = 0; i < sizeof(str); i++) {
-
-		cout << str[i];
-	}*/
-	char str[] = "Hello";
-	//str[1] = 'E';
-	cout << str << endl;
-	cout << sizeof("hello") << endl;
-	cout << sizeof(double) << endl;
-
-#endif // 
-	cout << 'a' - 'A' << endl;
-	const int n = 20;
-	char str[n] = {};
-	cout << "Введите строку: ";
+	const int s = 50;
+	char str[s];
 	SetConsoleCP(1251);
-	cin.getline(str, n);//CP1251
+	cin.getline(str, s);
+	shrink(str);
 	SetConsoleCP(866);
-	cout << str << endl;//CP866
-	cout << Stringlength(str) << endl;
-	to_upper(str);
-	capitalize(str);
-	cout << str << endl;
+	if (is_palindrome(str)) {
+		cout << "Введеное слово является полиндромным." << endl;
+	}
+	else
+		cout << "Введеное слово не является полиндромным." << endl;
+	if (is_int_number(str) && is_bin_number(str) && is_hex_number(str)) {
+		cout << "Эта строка может восприниматься как целое так и бинарное так и шеснадцатеричное число!" << endl;
+		cout << "Работать с этой строкой как с целым числом(1)." << endl;
+		cout << "Работать с этой строкой как с бинарным числом(2)." << endl;
+		cout << "Работать с этой строкой как с шеснадцатеричным числом(3)." << endl;
+		int choice; cin >> choice;
+		int num, hex;
+		switch (choice)
+		{
+		case 1:
+			cout << "int = " << to_int_number(str) << endl;
+			break;
+		case 2:
+			num = bin_to_dec(str);
+			cout << "Десятичное значение данного числа - " << num << endl;
+			num = dec_to_bin(num);
+			cout << "Бинарное значение данного числа - " << num << endl;
+			break;
+		case 3:
+			hex = hex_to_dec(str);
+			cout << "Десятичное значение данного числа - " << hex << endl;
+			cout << hex << " в шеснадцатеричной системе - " << dec_to_hex(hex) << endl;
+		}
+
+	}
+
+	if (is_int_number(str) && !is_bin_number(str)) {
+		cout << "Строка является целым числом." << endl;
+		cout << "int = " << to_int_number(str) << endl;
+	}
+
+	if (is_hex_number(str)) {
+		cout << "Введеная строка является шеснадцатеричным числом." << endl;
+		int hex = hex_to_dec(str);
+		cout << "Десятичное значение данного числа - " << hex << endl;
+		cout << hex << " в шеснадцатеричной системе - " << dec_to_hex(hex) << endl;
+	}
+
 	return 0;
 }
 
-
-int Stringlength(char str[]) {
-	int i = 0;
-	while (str[i])
-	{
-		str[i++];
-	}
-	return i;
-}
-void to_upper(char str[]) {
-
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] >= 'a' && str[i] <= 'z' ||
-			str[i] >= 'а' && str[i] <= 'я')
-			str[i] -= ' ';
-	}
-}
-
-void to_lower(char str[]) {
-
-	for (int i = 0; str[i]; i++) {
-		if (str[i] >= 'A' && str[i] <= 'Z' ||
-			str[i] >= 'А' && str[i] <= 'Я') {
-			str[i] += 32;
-		}
-	}
-}
-void capitalize(char str[])
+void shrink(char str[])
 {
-	to_lower(str);
-	if (str[0] >= 'a' && str[0] <= 'z' ||
-		str[0] >= 'а' && str[0] <= 'я') {
-		str[0] -= 32;
-	}
-	for (int i = 1; str[i]; i++) {
-		if (str[i - 1] == ' ') {
-			if (str[i] >= 'a' && str[i] <= 'z' ||
-				str[i] >= 'а' && str[i] <= 'я') {
-				str[i] -= 32;
+	for (int i = 0; str[i]; i++) {
+
+		if (str[i] == ' ' && str[i] == str[i + 1] || str[0] == ' ') {
+
+			for (int j = i; str[j]; j++) {
+				str[j] = str[j + 1];
 			}
+			i--;
 		}
 	}
+}
+
+bool is_palindrome(char str[])
+{
+	int k = 0;
+	for (int i = 0, j = strlen(str) - 1; str[i]; i++, j--) {
+
+		if (str[i] == str[j]) {
+			k++;
+		}
+	}
+	if (k == strlen(str)) {
+		return true;
+	}
+	else
+		return false;
+}
+
+bool is_int_number(char str[])
+{
+	int k = 0;
+	for (int i = 0; str[i]; i++) {
+
+		if (str[i] >= '0' && str[i] <= '9') {
+			k++;
+		}
+	}
+	if (k == strlen(str)) {
+		return true;
+	}
+	else
+		return false;
+
+}
+
+bool is_bin_number(char str[])
+{
+	int k = 0;
+	for (int i = 0; str[i]; i++) {
+
+		if (str[i] >= '0' && str[i] <= '1') {
+			k++;
+		}
+	}
+	if (k == strlen(str)) {
+		return true;
+	}
+	else
+		return false;
+}
+
+bool is_hex_number(char str[])
+{
+	int k = 0;
+	for (int i = 0; str[i]; i++) {
+
+		if (str[i] >= '0' && str[i] <= '9' || str[i] >= 'A' && str[i] <= 'F'
+			|| str[i] >= 'a' && str[i] <= 'f') {
+			k++;
+		}
+	}
+	if (k == strlen(str)) {
+		return true;
+	}
+	else
+		return false;
+}
+
+int  bin_to_dec(char str[])
+{
+	int sum = 0;
+	int k = strlen(str);
+	for (int i = 0; str[i]; i++) {
+
+		sum += (str[i] - '0') * pow(2, --k);
+	}
+	return sum;
+}
+
+int  dec_to_bin(int decimal)
+{
+	int k = 0, i = 0;
+	char str[30];
+	for (; decimal >= 1; i++) {
+		k = decimal % 2;
+		str[i] = k + '0';
+		decimal /= 2;
+	}
+	str[i] = '\0';
+	int s = strlen(str);
+	int temp;
+	for (int i = 0, j = s - 1; i < j; i++, j--) {
+
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+	}
+	int n = to_int_number(str);
+	return n;
+}
+
+int  to_int_number(char str[])
+{
+	int x, y = 0;
+	int s = strlen(str) - 1;
+	int sum = pow(10, s);
+	for (int i = 0; str[i]; i++) {
+
+		x = sum * (str[i] - '0');
+		y += x;
+		sum /= 10;
+	}
+	return y;
+}
+
+int  hex_to_dec(char str[])
+{
+	int f = 0, sum = 0;
+	int s = strlen(str);
+	for (int i = 0; str[i]; i++) {
+
+		if (str[i] >= '0' && str[i] <= '9') {
+			f = str[i] - '0';
+		}
+		if (str[i] >= 'A' && str[i] <= 'F') {
+			f = str[i] - '7';
+		}
+		if (str[i] >= 'a' && str[i] <= 'f') {
+			f = str[i] - 'W';
+		}
+		sum += f * pow(16, --s);
+	}
+	return sum;
+}
+
+string dec_to_hex(int decimal)
+{
+	int k = 0, i = 0;
+	char str[30];
+	for (; decimal >= 1; i++) {
+		k = decimal % 16;
+		if (k >= 10 && k <= 15) {
+			str[i] = k + '7';
+		}
+		else
+			str[i] = k + '0';
+		decimal /= 16;
+	}
+
+	str[i] = '\0';
+	int s = strlen(str);
+	int temp;
+	for (int i = 0, j = s - 1; i < j; i++, j--) {
+
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+	}
+	string v = str;
+	return v;
 }
