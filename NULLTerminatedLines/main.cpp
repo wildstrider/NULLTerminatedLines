@@ -1,90 +1,49 @@
 ﻿#include <iostream>
+#include <cstdlib>
 #include <Windows.h>
-#include <cmath>
+#include <cctype>
+#include <string.h>
+
 using namespace std;
 
 void reverse(char str[]);
-void shrink(char str[]); // удаляет лишние пробелы
-bool is_palindrome(char str[]); // Определяет, является ли строка палиндромом  
-bool is_int_number(char str[]); //Определяет, является ли строка целым числом
-bool is_bin_number(char str[]); //Проверяет, является ли строка двоичным числом      
-bool is_hex_number(char str[]); //Проверяет, является ли функция шестнадцатеричным числом
-int  bin_to_dec(char str[]);  //Если строка - двоичное число, функция вернет его десятичное значение.   
-int dec_to_bin(int decimal); //Функция принимает десятичное число, и возвращает его двоичное значение.
-int  to_int_number(char str[]); //Если строка - целое число, функция вернет его числовое значение. 
-int  hex_to_dec(char str[]);	//Если строка - Шестнадцатеричное число, функция вернет его десятичное значение
-string dec_to_hex(int decimal);  //Функция принимает десятичное число, и возвращает его Шестнадцатеричное значение.
-bool is_mac_address(char str[]);//Проверяет, является ли строка MAC-адресом
-bool is_ip_address(char str[]);	//Проверяет, является ли строка IP-адресом
-
+void to_lower(char str[]);
+void remove_symbol(char str[], char symbol);
+void shrink(char str[]);
+bool is_palindrome(char str[]);
+bool is_hex_number(char str[]);
+bool is_int_number(char str[]);
+bool is_bin_number(char str[]);
+string  dec_to_bin(int decimal);
+int  to_int_number(char str[]);
+int  hex_to_dec(char str[]);
+string dec_to_hex(int decimal);
+bool is_ip_address(char str[]);
+bool is_mac_address(char str[]);
+int  bin_to_dec(char str[]);
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
-	const int s = 50;
+	const int s = 256;
 	char str[s];
+	cout << "Введите строку" << endl;
 	SetConsoleCP(1251);
 	cin.getline(str, s);
-	shrink(str);
 	SetConsoleCP(866);
-	if (is_palindrome(str)) {
-		cout << "Введеное слово является полиндромным." << endl;
-	}
-	else
-		cout << "Введеное слово не является полиндромным." << endl;
-	if (is_int_number(str) && is_bin_number(str) && is_hex_number(str)) {
-		cout << "Эта строка может восприниматься как целое так и бинарное так и шеснадцатеричное число!" << endl;
-		cout << "Работать с этой строкой как с целым числом(1)." << endl;
-		cout << "Работать с этой строкой как с бинарным числом(2)." << endl;
-		cout << "Работать с этой строкой как с шеснадцатеричным числом(3)." << endl;
-		int choice; cin >> choice;
-		int num, hex;
-		switch (choice)
-		{
-		case 1:
-			cout << "int = " << to_int_number(str) << endl;
-			break;
-		case 2:
-			num = bin_to_dec(str);
-			cout << "Десятичное значение данного числа - " << num << endl;
-			num = dec_to_bin(num);
-			cout << "Бинарное значение данного числа - " << num << endl;
-			break;
-		case 3:
-			hex = hex_to_dec(str);
-			cout << "Десятичное значение данного числа - " << hex << endl;
-			cout << hex << " в шеснадцатеричной системе - " << dec_to_hex(hex) << endl;
-		}
-
-	}
-
-	if (is_int_number(str) && !is_bin_number(str)) {
-		cout << "Строка является целым числом." << endl;
-		cout << "int = " << to_int_number(str) << endl;
-	}
-
-	if (is_hex_number(str)) {
-		cout << "Введеная строка является шеснадцатеричным числом." << endl;
-		int hex = hex_to_dec(str);
-		cout << "Десятичное значение данного числа - " << hex << endl;
-		cout << hex << " в шеснадцатеричной системе - " << dec_to_hex(hex) << endl;
-	}
-
-	if (is_ip_address(str)) {
-		cout << "Введеная строка является ip-адресом" << endl;
-	}
-	else
-		cout << "Введеная строка не является ip-адресом" << endl;
-
-	if (is_mac_address(str)) {
-		cout << "Введеная строка является MAC-адресом" << endl;
-	}
-	else
-		cout << "Введеная строка не является MAC-адресом" << endl;
+	cout << str << (is_int_number(str) ? " " : " НЕ ") << "является целым числом." << endl;
+	cout << (is_int_number(str) ? to_int_number(str) : 0) << endl;
+	cout << str << (is_palindrome(str) ? "" : " НЕ") << " является полиндромом" << endl;
+	cout << str << (is_bin_number(str) ? "" : " НЕ") << " является двоичным числом" << endl;
+	cout << (is_bin_number(str) ? bin_to_dec(str) : 0) << endl;
+	cout << str << (is_hex_number(str) ? " " : " НЕ ") << "является шеснадцатиричным числом." << endl;
+	cout << (is_hex_number(str) ? hex_to_dec(str) : 0) << endl;
+	int num; cout << "введите десятичное число: "; cin >> num;
+	cout << num << " в двоичной системе - " << dec_to_bin(num) << endl;
+	cout << num << " в шеснадцатеричной системе - " << dec_to_hex(num) << endl;
 
 	return 0;
 }
-
 
 void reverse(char str[])
 {
@@ -95,6 +54,25 @@ void reverse(char str[])
 		temp = str[i];
 		str[i] = str[j];
 		str[j] = temp;
+	}
+}
+void to_lower(char str[])
+{
+	for (int i = 0; str[i]; i++) {
+		str[i] = tolower(str[i]);
+	}
+}
+void remove_symbol(char str[], char symbol) {
+
+	for (int i = 0; str[i]; i++) {
+
+		while (str[i] == symbol) {
+
+			for (int j = i; str[j]; j++) {
+
+				str[j] = str[j + 1];
+			}
+		}
 	}
 }
 void shrink(char str[])
@@ -112,65 +90,31 @@ void shrink(char str[])
 }
 bool is_palindrome(char str[])
 {
-	int k = 0;
-	for (int i = 0, j = strlen(str) - 1; str[i]; i++, j--) {
+	int length = strlen(str);
+	char* buffer = new char[length + 1];
+	strcpy(buffer, str);
+	to_lower(buffer);
+	remove_symbol(buffer, ' ');
+	for (int i = 0, j = strlen(buffer) - 1; buffer[i] / 2; i++, j--) {
 
-		if (str[i] == str[j]) {
-			k++;
+		if (buffer[i] != buffer[j]) {
+			delete[] buffer;
+			return false;
 		}
-          if (k == strlen(str)) {
-		      return true;
-	      }
 	}
-	
-		return false;
+	delete[] buffer;
+	return true;
 }
 bool is_int_number(char str[])
 {
-	int k = 0;
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] >= '0' && str[i] <= '9') {
-			k++;
-		}
-          if (k == strlen(str)) {
-		     return true;
-	      }
-	}
-	
-		return false;
-
+	for (int i = 0; str[i]; i++) if (!isdigit(str[i])) return false;
+	return true;
 }
-bool is_bin_number(char str[])
+int  to_int_number(char str[])
 {
-	int k = 0;
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] >= '0' && str[i] <= '1') {
-			k++;
-		}
-          if (k == strlen(str)) {
-		      return true;
-	      }
-	}
-
-		return false;
-}
-bool is_hex_number(char str[])
-{
-	int k = 0;
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] >= '0' && str[i] <= '9' || str[i] >= 'A' && str[i] <= 'F'
-			|| str[i] >= 'a' && str[i] <= 'f') {
-			k++;
-		}
-          if (k == strlen(str)) {
-		     return true;
-	      }
-	}
-	
-		return false;
+	int num;
+	if (is_int_number(str)) return num = atoi(str);
+	return 0;
 }
 int  bin_to_dec(char str[])
 {
@@ -178,36 +122,61 @@ int  bin_to_dec(char str[])
 	int k = strlen(str);
 	for (int i = 0; str[i]; i++) {
 
-		sum += (str[i] - '0') * pow(2, --k);
+		if (str[i] != ' ') {
+			sum += (str[i] - '0') * pow(2, --k);
+		}
 	}
 	return sum;
 }
-int  dec_to_bin(int decimal)
+bool is_bin_number(char str[])
 {
-	int k = 0, i = 0;
-	char str[30];
-	for (; decimal >= 1; i++) {
-		k = decimal % 2;
-		str[i] = k + '0';
-		decimal /= 2;
-	}
-	str[i] = '\0';
-	reverse(str);
-	int n = to_int_number(str);
-	return n;
-}
-int  to_int_number(char str[])
-{
-	int x, y = 0;
-	int s = strlen(str) - 1;
-	int sum = pow(10, s);
 	for (int i = 0; str[i]; i++) {
 
-		x = sum * (str[i] - '0');
-		y += x;
-		sum /= 10;
+		if (str[i] != '0' && str[i] != '1' && str[i] != ' ') return false;
+		if (str[i] == ' ' && str[i - 1] == ' ' && str[i + 1] == ' ') 	return false;
+
 	}
-	return y;
+	return true;
+}
+string  dec_to_bin(int decimal)
+{
+	int capacity = 0, x = 0, k = 0;
+	int buffer = decimal;
+	for (; buffer > 0; capacity++) {
+		if (x == 4) {
+			capacity++;
+		}
+		if (x == 8) {
+			capacity += 2;
+			x = 0;
+		}
+		buffer /= 2;
+		x++;
+	}
+	const int s = 256;
+	char bin[s];
+	capacity = s - capacity;
+	for (int i = (s - capacity) - 1; decimal; i--) {
+		if (k == 4) {
+			bin[i--] = ' ';
+		}
+		if (k == 8) {
+			bin[i--] = ' ';
+			bin[i--] = ' ';
+			k = 0;
+		}
+		bin[i] = decimal % 2 + '0';
+		decimal /= 2;
+		k++;
+	}
+	bin[s - capacity] = '\0';
+	string v = bin;
+	return v;
+}
+bool is_hex_number(char str[])
+{
+	for (int i = 0; str[i]; i++) if (!isxdigit(str[i])) return false;
+	return true;
 }
 int  hex_to_dec(char str[])
 {
@@ -241,7 +210,6 @@ string dec_to_hex(int decimal)
 			str[i] = k + '0';
 		decimal /= 16;
 	}
-
 	str[i] = '\0';
 	reverse(str);
 	string v = str;
@@ -250,26 +218,22 @@ string dec_to_hex(int decimal)
 bool is_ip_address(char str[])
 {
 	int s = strlen(str);
-	int k=0,m=0;
+	int k = 0, m = 0;
 	for (int i = 0; str[i]; i++) {
 
-		
 		if (str[i] == '.') {
 			k++;
 		}
 		if (str[i] >= '0' && str[i] <= '9') {
 			m++;
 		}
-        if (k == 3 && m == s - 3) {
-		     return true;
-	    }
-    }
-	
+		if (k == 3 && m == s - 3) {
+			return true;
+		}
+	}
 	return false;
-
-
 }
-bool is_mac_address(char str[]) 
+bool is_mac_address(char str[])
 {
 	int s = strlen(str);
 	int k = 0, m = 0;
@@ -286,6 +250,5 @@ bool is_mac_address(char str[])
 			return true;
 		}
 	}
-
 	return false;
 }
