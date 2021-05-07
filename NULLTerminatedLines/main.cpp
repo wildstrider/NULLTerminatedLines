@@ -2,7 +2,8 @@
 #include <cstdlib>
 #include <Windows.h>
 #include <cctype>
-#include <string.h>
+#include <string>
+#include <regex>
 
 using namespace std;
 
@@ -41,6 +42,8 @@ int main()
 	int num; cout << "введите десятичное число: "; cin >> num;
 	cout << num << " в двоичной системе - " << dec_to_bin(num) << endl;
 	cout << num << " в шеснадцатеричной системе - " << dec_to_hex(num) << endl;
+	cout << str << (is_ip_address(str) ? "" : " НЕ") << " является ip адресом" << endl;
+	cout << str << (is_mac_address(str) ? "" : " НЕ") << " является mac-адесом адресом" << endl;
 
 	return 0;
 }
@@ -140,9 +143,9 @@ bool is_bin_number(char str[])
 }
 string  dec_to_bin(int decimal)
 {
-	int capacity = 0, x = 0, k = 0;
+	int capacity = 0, x = 0, k = 0, y = 0;
 	int buffer = decimal;
-	for (; buffer > 0; capacity++) {
+	for (; buffer; capacity++) {
 		if (x == 4) {
 			capacity++;
 		}
@@ -151,10 +154,15 @@ string  dec_to_bin(int decimal)
 			x = 0;
 		}
 		buffer /= 2;
-		x++;
+		x++; y++;
+	}
+	while (y % 8 != 0)
+	{
+		capacity++;
+		y++;
 	}
 	const int s = 256;
-	char bin[s];
+	char bin[s]{};
 	capacity = s - capacity;
 	for (int i = (s - capacity) - 1; decimal; i--) {
 		if (k == 4) {
@@ -169,7 +177,7 @@ string  dec_to_bin(int decimal)
 		decimal /= 2;
 		k++;
 	}
-	bin[s - capacity] = '\0';
+	
 	string v = bin;
 	return v;
 }
@@ -217,38 +225,21 @@ string dec_to_hex(int decimal)
 }
 bool is_ip_address(char str[])
 {
-	int s = strlen(str);
-	int k = 0, m = 0;
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] == '.') {
-			k++;
-		}
-		if (str[i] >= '0' && str[i] <= '9') {
-			m++;
-		}
-		if (k == 3 && m == s - 3) {
-			return true;
-		}
-	}
+	regex ip("([\\d]{2,3})(\.)"
+		     "([\\d]{1,3})(\.)"
+		     "([\\d]{1,3})(\.)"
+		     "([\\d]{1,3})");
+	if (regex_match(str, ip))return true;
 	return false;
 }
 bool is_mac_address(char str[])
 {
-	int s = strlen(str);
-	int k = 0, m = 0;
-	for (int i = 0; str[i]; i++) {
-
-		if (str[i] == ':' || str[i] == '-') {
-			k++;
-		}
-		if (str[i] >= '0' && str[i] <= '9' || str[i] >= 'a' && str[i] <= 'f'
-			|| str[i] >= 'A' && str[i] <= 'F') {
-			m++;
-		}
-		if (k == 5 && m == s - 5) {
-			return true;
-		}
-	}
+	regex mac("([A-Fa-f\\d]{2})([:-])"
+		      "([A-Fa-f\\d]{2})([:-])"
+		      "([A-Fa-f\\d]{2})([:-])"
+		      "([A-Fa-f\\d]{2})([:-])"
+		      "([A-Fa-f\\d]{2})([:-])"
+		      "([A-Fa-f\\d]{2})");
+	if (regex_match(str, mac))return true;
 	return false;
 }
